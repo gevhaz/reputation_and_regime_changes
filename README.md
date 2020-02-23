@@ -48,6 +48,6 @@ run_main_test(1, "CCPR", "BARS")
 ```
 
 which would then show some statistics about the selected sample and 
-produce a stacked bar plot with two groups -- ratifiers and 
-non-ratifiers -- and bar heights depending on the fraction of the sample 
-that saw improvements, decline or no change in their ranking.
+produce a stacked bar plot with two groups – ratifiers and non-ratifiers 
+– and bar heights depending on the fraction of the sample that saw 
+improvements, decline or no change in their ranking.

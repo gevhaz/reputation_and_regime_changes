@@ -16,12 +16,12 @@ add_ages = function(changes)
 	}
 
 
-	# add regime age, begin date and end date for regimes
+	# Add regime age, begin date and end date for regimes.
 	for (i in 1:(nrow(changes)-1)) 
 	{
 		same_country = changes[i,"ccode"] == changes[i+1, "ccode"]
 		
-		# calculate the age of regime 
+		# Calculate the age of regime.
 		if (same_country) 
 		{
 			bdate = get_begin_date(changes[i,])
@@ -30,7 +30,7 @@ add_ages = function(changes)
 			changes[i, "bdate"] = bdate
 			changes[i, "edate"] = edate
 		} 
-		# special case: last row for a country
+		# Special case: last row for a country.
 		else 
 		{
 			is_end_of_state = changes[i, "regtrans"] == 98 | 
@@ -40,7 +40,7 @@ add_ages = function(changes)
 			{
 				# This row does not contain a new regime and is only
 				# used for getting the end date of the last regime.
-				# Setting it's age to zero or one day removes it when
+				# Setting its age to zero or one day removes it when
 				# filtering for age later.
 				changes[i, "age"] = 0
 				changes[i, "bdate"] = ymd("20200101")
@@ -59,8 +59,8 @@ add_ages = function(changes)
 		}
 	}
 
-	# the last regime which is ignored in the loop and it is today's Fijian
-	# regime so give it edate = December 31, 2018
+	# The last regime which is ignored in the loop and it is today's Fijian
+	# regime so give it edate = December 31, 2018.
 	bdate = get_begin_date(changes[nrow(changes),])
 	edate = as.Date("2018-12-31")
 	changes[nrow(changes),"age"] = dseconds(interval(bdate, edate))

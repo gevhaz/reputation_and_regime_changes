@@ -1,7 +1,7 @@
 extract_consecutives = function(regimes, minimum_age) 
 {
 
-	# Empty data frame to be filled with consecutive regimes
+	# Empty data frame to be filled with consecutive regimes.
 	consecutives = data.frame("country" 		= character(0),
 							  "regime1.bdate"	= numeric(0), 
 							  "regime1.edate"	= numeric(0), 
@@ -12,18 +12,18 @@ extract_consecutives = function(regimes, minimum_age)
 							  "regtrans" 		= numeric(0))
 
 	# If two consecutive regimes in one country are both over min_age,
-	# combine to one row and add to new data.frame
+	# combine to one row and add to new data.frame.
 	for (countryname in unique(regimes$country)) 
 	{
 		# One loop for each country so that no consecutive regimes are from
-		# different countries
+		# different countries.
 		country = regimes[regimes$country==countryname,]
 
 		if (nrow(country) > 1) 
 		{
 			for (i in 1:(nrow(country)-1)) 
 			{
-				# Both regimes need to be at least the minimum age
+				# Both regimes need to be at least the minimum age.
 				if (country[i,"age"] >= minimum_age & 
 					country[i+1, "age"] >= minimum_age) 
 				{

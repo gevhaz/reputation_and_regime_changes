@@ -52,13 +52,13 @@ start_year = 1948
 fh_start_year = 1972
 max_gap = 3
 
-## Working copy of Polity dataset
+## Working copy of Polity dataset.
 regime_changes = raw_polity_iv
 
-# Keep only rows where there is regime change data (D4=TRUE)
+# Keep only rows where there is regime change data (D4=TRUE).
 regime_changes = regime_changes[regime_changes$d4 %in% TRUE,]
 
-# Keep only rows with data for years after a start year
+# Keep only rows with data for years after a start year.
 regime_changes = regime_changes[regime_changes$year >= start_year,]
 
 ###################
@@ -71,7 +71,7 @@ regime_changes[regime_changes$country == "Sudan-North","country"] = "Sudan"
 SUD2011 = regime_changes$country == "Sudan" & regime_changes$year == 2011
 regime_changes = regime_changes[!SUD2011,]
 
-# Removing Kosovo because of too little Freedom House data
+# Removing Kosovo because of too little Freedom House data.
 regime_changes = regime_changes[regime_changes$country != "Kosovo",]
 
 # Myanmar seems to have an error in the data, the "byear" of the
@@ -95,7 +95,7 @@ regime_changes = regime_changes[regime_changes$regtrans != 0,]
 
 regime_changes = add_ages(regime_changes)
 
-# Create dataset for test 1
+# Create dataset for test 1.
 conreg = extract_consecutives(regime_changes, years(min_age_conreg))
 conreg = conreg[year(conreg$regime1.edate) >= fh_start_year +
 				n_years_conreg,]
@@ -107,7 +107,7 @@ writeLines(paste(sum(too_long_interruption), "consecutive regimes",
 				 "filtered because more than", max_gap, 
 				 "years between them"))
 
-# Define periods for analysis
+# Define periods for analysis.
 conreg$p1.bdate = floor_date(conreg$regime1.edate, unit = 'year') -
 	years(n_years_conreg)
 conreg$p1.edate = floor_date(conreg$regime1.edate, unit = 'year') - days(1)
@@ -115,14 +115,14 @@ conreg$p2.bdate = ceiling_date(conreg$regime2.bdate, unit = 'year')
 conreg$p2.edate = floor_date(conreg$regime2.bdate, unit = 'year') +
 	years(n_years_conreg)
 
-# Create dataset for test 2
+# Create dataset for test 2.
 durable_with_data = regime_changes$age >= years(min_age_sinreg) &
 	regime_changes$byear >= fh_start_year
 columns_to_keep = c("country", "year", "bdate", 
 					"edate", "regtrans", "age")
 sinreg = regime_changes[durable_with_data, columns_to_keep]
 
-# Define periods for analysis
+# Define periods for analysis.
 sinreg$p1.bdate = ceiling_date(sinreg$bdate, unit = 'years')
 sinreg$p1.edate = ceiling_date(sinreg$bdate, unit = 'years') +
 	years(n_p1_years_single) - days(1)
@@ -144,20 +144,20 @@ fh_data[,1] 		= country_name_replace(fh_data[,1], included_countries,
 										   find_replace_fh)
 writeLines("Freedom House country names replaced")
 
-# Clean up the Freedom House data
+# Clean up the Freedom House data.
 fh_data[3, "V1"] = "Information type"
 rownames(fh_data) = fh_data$V1
 fh_data = fh_data[-1,-1]
 fh_data["Information type",] = trimws(fh_data["Information type",])
 
-# It's the same country, just a name change
+# It's the same country, just a name change.
 fh_data["Yugoslavia", 91:99] = fh_data["Serbia and Montenegro", 91:99]
 
 #indices = get_fh_indices(fh_data, "CL")
 indices = (get_fh_indices(fh_data, "CL") + 
 get_fh_indices(fh_data, "PR")) / 2.0
 
-# Make column for describing human rights trend based in mean index change
+# Make column for describing human rights trend based in mean index change.
 get_trend_column = function(mean_change)
 {
 	trend = ifelse(mean_change < 0, "IMPROVEMENT", 
@@ -166,7 +166,7 @@ get_trend_column = function(mean_change)
 	return (trend)
 }
 
-# Get average index for period 1 and period 2 for sinreg
+# Get average index for period 1 and period 2 for sinreg.
 sinreg$p1.mean = get_average_index(year(sinreg$p1.bdate),
 								   year(sinreg$p1.edate), 
 								   sinreg$country, indices)
@@ -176,7 +176,7 @@ sinreg$p2.mean	 = get_average_index(year(sinreg$p2.bdate),
 sinreg$mean.index.change = sinreg$p2.mean - sinreg$p1.mean
 sinreg$trend = get_trend_column(sinreg$mean.index.change)
 
-# Get average index for period 1 and period 2 for conreg
+# Get average index for period 1 and period 2 for conreg.
 conreg$p1.mean = get_average_index(year(conreg$p1.bdate), 
 								   year(conreg$p1.edate),
 									 conreg$country, indices)
@@ -190,13 +190,13 @@ conreg$trend = get_trend_column(conreg$mean.index.change)
 ## RATIFIER COLUMN ##
 #####################
 
-# Make columns for CCPR ratification
+# Make columns for CCPR ratification.
 ccpr_ratifications = process_ratification_data(raw_ratification_data,
 										  included_countries, "CCPR")
 conreg$ccpr.ratifier	= get_ratifier_column(ccpr_ratifications, conreg)
 sinreg$ccpr.ratifier 	= get_ratifier_column(ccpr_ratifications, sinreg)
 
-# Make columns for Optional Protocol ratification
+# Make columns for Optional Protocol ratification.
 protocol_ratifications =
 	process_ratification_data(raw_protocol_ratification_data,
 							  included_countries, "PROTOCOL")
@@ -209,11 +209,11 @@ sinreg$protocol.ratifier = get_ratifier_column(protocol_ratifications,
 ## TESTS ##
 ###########
 
-# Plot style
+# Plot style.
 bars_theme   = theme(text=element_text(family="sans,Helvetica", size=20))
 bars_palette = scale_fill_brewer(palette = "RdYlGn")
 
-# Plot label names
+# Plot label names.
 bars_labs    = labs(x	 = "Has ratified", 
 					y 	 = "Share of sample", 
 					fill = "Human rights trend")
@@ -221,7 +221,7 @@ histogram_labs = labs(x		= "Mean index change",
 					  y		= "Number of cases",
 					  fill	= "Has ratified")
 
-# Titles for plots
+# Titles for plots.
 init1_bars_title = ggtitle(label = "Test 1: Initial Test")
 init2_bars_title = ggtitle(label = "Test 2: Initial Test")
 main1_ccpr_bars_title = ggtitle(label = "Test 1: CCPR")
@@ -253,11 +253,11 @@ run_initial_test = function(TEST_NUMBER)
 					 stop("No test with that number."))
 	populations = get_populations_initial_test(main_dataset)
 
-	# ccpr.ratifier just used because an x variable is required
+	# ccpr.ratifier just used because an x variable is required.
 	treaty = "ccpr.ratifier"
 	populations[,treaty] = "MIXED"
 	
-	# Show statistics for population
+	# Show statistics for population.
 	writeLines(paste("Information for mixed sample of ratifiers,", 
 					 "non-ratifiers and those who joined."))
 	writeLines(paste("The ratio of democratizations to autocratizations", 
@@ -284,7 +284,7 @@ run_main_test = function(TEST_NUMBER, TREATY, GEOMETRY = "BARS")
 				   PROTOCOL1 = main1_protocol_bars_title,
 				   PROTOCOL2 = main2_protocol_bars_title)
 
-	# Show populations statistics
+	# Show populations statistics.
 	HR_improvements_ratification_status(populations, TREATY)
 	
 	switch(GEOMETRY,

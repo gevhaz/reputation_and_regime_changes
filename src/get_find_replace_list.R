@@ -3,7 +3,7 @@ get_find_replace_list = function(target_data)
 
 	if (target_data == 'fh') 
 	{
-		# What it's called in Freedom House dataset
+		# What it's called in Freedom House dataset.
 		find_name = c(
 			"The Gambia",
 			"Congo (Brazzaville)",
@@ -23,7 +23,7 @@ get_find_replace_list = function(target_data)
 			"United Arab Emirates"
 		)
 
-		# What it's called in Polity dataset
+		# What it's called in Polity dataset.
 		replace_name = c(
 			"Gambia",
 			"Congo Brazzaville",
@@ -45,7 +45,7 @@ get_find_replace_list = function(target_data)
 	}
 	else if (target_data == 'un')
 	{
-		# What it's called in UN dataset
+		# What it's called in UN dataset.
 		find_name = c(
 			"Bolivia (Plurinational State of)",
 			"Slovakia",
@@ -72,7 +72,7 @@ get_find_replace_list = function(target_data)
 			"Democratic People's Republic of Korea"
 		)
 
-		# What it's called in Polity dataset
+		# What it's called in Polity dataset.
 		replace_name = c(
 			"Bolivia",
 			"Slovak Republic",

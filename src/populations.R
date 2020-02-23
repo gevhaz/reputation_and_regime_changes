@@ -12,7 +12,7 @@ get_populations_initial_test = function(dataset)
 	return(rbind(democratizations, autocratizations))
 }
 
-# Returns columns saying what rows belong to which population
+# Returns columns saying what rows belong to which population.
 get_pop_rows = function(dataset, treaty)
 {
 	dem   = dataset[,"regtrans"] %in% 3

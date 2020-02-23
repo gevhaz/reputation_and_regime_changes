@@ -31,7 +31,7 @@ country_name_replace = function(country_names, included_countries,
 		}
 	}
 
-	# Find countries that have different names or are missing in dataset
+	# Find countries that have different names or are missing in dataset.
 	missing_countries = included_countries[!(included_countries %in%
 											 country_names)]
 
