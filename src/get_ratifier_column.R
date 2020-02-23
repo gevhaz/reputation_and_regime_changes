@@ -3,25 +3,25 @@
 # if in between.
 get_ratifier_column = function(ratifications, regimes)
 {
-	ratifier_column = vector(mode = "character", length = nrow(regimes))
-	for (i in 1:nrow(regimes))
-	{
-		country = regimes[i, "country"]
-		ratification_date = ratifications[ratifications$country == country,
-								 "ratification.date"]
-		if (ratification_date < regimes[i, "p1.bdate"])
-		{
-			ratifier = "YES"
-		}
-		else if (ratification_date <= regimes[i, "p2.edate"])
-		{
-			ratifier = "JOINED"
-		}
-		else
-		{
-			ratifier = "NO" 
-		}
-		ratifier_column[i] = ratifier
-	}
-	return (ratifier_column)
+    ratifier_column = vector(mode = "character", length = nrow(regimes))
+    for (i in 1:nrow(regimes))
+    {
+        country = regimes[i, "country"]
+        ratification_date = ratifications[ratifications$country == country,
+                                 "ratification.date"]
+        if (ratification_date < regimes[i, "p1.bdate"])
+        {
+            ratifier = "YES"
+        }
+        else if (ratification_date <= regimes[i, "p2.edate"])
+        {
+            ratifier = "JOINED"
+        }
+        else
+        {
+            ratifier = "NO" 
+        }
+        ratifier_column[i] = ratifier
+    }
+    return (ratifier_column)
 }
