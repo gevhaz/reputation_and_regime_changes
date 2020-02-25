@@ -46,7 +46,7 @@ writeLines("CCPR Optional Protocol ratification data read\n")
 
 min_age_sinreg = 10
 min_age_conreg = 3
-n_p1_years_single = 2
+n_p1_years_single = 5
 n_years_conreg = 2
 start_year = 1948
 fh_start_year = 1972
@@ -112,8 +112,8 @@ conreg$p1.bdate = floor_date(conreg$regime1.edate, unit = 'year') -
     years(n_years_conreg)
 conreg$p1.edate = floor_date(conreg$regime1.edate, unit = 'year') - days(1)
 conreg$p2.bdate = ceiling_date(conreg$regime2.bdate, unit = 'year')
-conreg$p2.edate = floor_date(conreg$regime2.bdate, unit = 'year') +
-    years(n_years_conreg)
+conreg$p2.edate = ceiling_date(conreg$regime2.bdate, unit = 'year') +
+    years(n_years_conreg) - days(1)
 
 # Create dataset for test 2.
 durable_with_data = regime_changes$age >= years(min_age_sinreg) &
@@ -153,9 +153,9 @@ fh_data["Information type",] = trimws(fh_data["Information type",])
 # It's the same country, just a name change.
 fh_data["Yugoslavia", 91:99] = fh_data["Serbia and Montenegro", 91:99]
 
-#indices = get_fh_indices(fh_data, "CL")
-indices = (get_fh_indices(fh_data, "CL") + 
-get_fh_indices(fh_data, "PR")) / 2.0
+indices = get_fh_indices(fh_data, "CL")
+#  indices = (get_fh_indices(fh_data, "CL") + 
+#      get_fh_indices(fh_data, "PR")) / 2.0
 
 # Make column for describing human rights trend based in mean index change.
 get_trend_column = function(mean_change)
@@ -234,9 +234,9 @@ show_histogram = function(populations, treaty, bars_title)
 {
     ggplot(populations,aes_string("mean.index.change", fill=treaty)) + 
         bars_theme + histogram_labs + bars_title + 
-        # geom_histogram(alpha = 0.5, aes(y = ..density..), binwidth = 1, 
-        # position = "identity") +
-        geom_density(alpha = 0.2) + 
+        geom_histogram(alpha = 0.5, aes(y = ..density..), binwidth = 1, 
+        position = "identity") +
+        # geom_density(alpha = 0.2) + 
         scale_fill_brewer(palette = "Set1")
 }
 
@@ -249,6 +249,8 @@ show_bars = function(populations, treaty, bars_title)
 
 run_initial_test = function(TEST_NUMBER)
 {
+    writeLines(paste("\nRunning initial test for test", TEST_NUMBER, "\n"))
+
     main_dataset = switch(TEST_NUMBER, conreg, sinreg,
                      stop("No test with that number."))
     populations = get_populations_initial_test(main_dataset)
@@ -264,12 +266,18 @@ run_initial_test = function(TEST_NUMBER)
                      "in this group is 1."))
     HR_improvements(populations)
 
+	# Save plot to disk
+	svgname = paste0("t", TEST_NUMBER, "-initial-bars-0.svg")
+	svg(filename = svgname)
+    
     plot_title = switch(TEST_NUMBER, init1_bars_title, init2_bars_title)
     show_bars(populations, treaty, plot_title)
 }
 
 run_main_test = function(TEST_NUMBER, TREATY, GEOMETRY = "BARS")
 {
+    writeLines(paste("\nRunning main test for test", TEST_NUMBER,
+                 "with ratification categorization based\non", TREATY, "\n"))
     treaty_column = switch(TREATY, 
                            "CCPR" = "ccpr.ratifier", 
                            "PROTOCOL" = "protocol.ratifier",
@@ -286,6 +294,10 @@ run_main_test = function(TEST_NUMBER, TREATY, GEOMETRY = "BARS")
 
     # Show populations statistics.
     HR_improvements_ratification_status(populations, TREATY)
+
+	# Save plot to disk
+	svgname = paste0("t", TEST_NUMBER, "-main-", tolower(TREATY), "-", tolower(GEOMETRY), "-0.svg")
+	svg(filename = svgname)
     
     switch(GEOMETRY,
         BARS = show_bars(populations, treaty_column, plot_title),

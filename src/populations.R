@@ -74,7 +74,7 @@ get_populations_main_test = function(dataset, treaty)
 
     writeLines(paste("Returning", nrow(ratifiers), "ratifiers and",
                      nrow(nonratifiers), "non-ratifiers with a ratio of",
-                     "democratizations to autocratizations of", ratio))
+                     "\ndemocratizations to autocratizations of", ratio))
     
     return(rbind(ratifiers, nonratifiers))
 }

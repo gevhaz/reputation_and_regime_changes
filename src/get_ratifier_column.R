@@ -7,13 +7,13 @@ get_ratifier_column = function(ratifications, regimes)
     for (i in 1:nrow(regimes))
     {
         country = regimes[i, "country"]
-        ratification_date = ratifications[ratifications$country == country,
-                                 "ratification.date"]
-        if (ratification_date < regimes[i, "p1.bdate"])
+        date_of_effect = ratifications[ratifications$country == country,
+                                 "date.of.effect"]
+        if (date_of_effect < regimes[i, "p1.bdate"])
         {
             ratifier = "YES"
         }
-        else if (ratification_date <= regimes[i, "p2.edate"])
+        else if (date_of_effect <= regimes[i, "p2.edate"])
         {
             ratifier = "JOINED"
         }
