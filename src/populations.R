@@ -56,6 +56,13 @@ get_pop_sizes = function(dataset, treaty)
 
 get_populations_main_test = function(dataset, treaty)
 {
+	# For protocol test: compare only
+	if (treaty == "protocol.ratifier")
+	{
+		ratified_both = dataset$ccpr.ratifier == dataset$protocol.ratifier
+		dataset = dataset[ratified_both,]
+	}
+
     sizes = get_pop_sizes(dataset, treaty)
     rows  = get_pop_rows(dataset, treaty)
 
