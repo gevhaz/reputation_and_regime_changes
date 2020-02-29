@@ -18,7 +18,7 @@ HR_improvements = function(dataset)
     writeLines(paste("The variance of the mean.index.change column is:",
                      round(var(dataset$mean.index.change ), digits=4)))
 
-	writeLines("\nFor LaTeX:\n")
+    # writeLines("\nFor LaTeX:\n")
 
 	writeLines(paste0(" & ", improvements, " (", round(improvements/n*100,digits=1), "\\%)"))
 	writeLines(paste0(" & ", nochange, " (", round(nochange/n*100,digits=1), "\\%)"))

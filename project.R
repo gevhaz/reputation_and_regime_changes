@@ -153,9 +153,9 @@ fh_data["Information type",] = trimws(fh_data["Information type",])
 # It's the same country, just a name change.
 fh_data["Yugoslavia", 91:99] = fh_data["Serbia and Montenegro", 91:99]
 
-indices = get_fh_indices(fh_data, "CL")
-#  indices = (get_fh_indices(fh_data, "CL") + 
-#      get_fh_indices(fh_data, "PR")) / 2.0
+# indices = get_fh_indices(fh_data, "CL")
+indices = (get_fh_indices(fh_data, "CL") + 
+           get_fh_indices(fh_data, "PR")) / 2.0
 
 # Make column for describing human rights trend based in mean index change.
 get_trend_column = function(mean_change)
@@ -208,6 +208,10 @@ sinreg$protocol.ratifier = get_ratifier_column(protocol_ratifications,
 ###########
 ## TESTS ##
 ###########
+
+# Only using major democratic transitions and adverse regime changes
+sinreg = sinreg[sinreg$regtrans %in% c(-2, 3),]
+conreg = conreg[conreg$regtrans %in% c(-2, 3),]
 
 # Plot style.
 bars_theme   = theme(text=element_text(family="sans,Helvetica", size=20))
@@ -284,7 +288,10 @@ run_main_test = function(TEST_NUMBER, TREATY, GEOMETRY = "BARS")
                            stop("No treaty with that code."))
     main_dataset = switch(TEST_NUMBER, conreg, sinreg,
                      stop("No test with that number."))
-    populations = get_populations_main_test(main_dataset, treaty_column)
+
+    # TODO: Keep or not? Subtracting nr_mean.
+    populations = get_populations_main_test(main_dataset, treaty_column, TRUE)
+    populations$trend = get_trend_column(populations$mean.index.change)
 
     plot_title = switch(paste0(TREATY, TEST_NUMBER), 
                    CCPR1 = main1_ccpr_bars_title,
@@ -297,7 +304,7 @@ run_main_test = function(TEST_NUMBER, TREATY, GEOMETRY = "BARS")
 
 	# Save plot to disk
 	svgname = paste0("t", TEST_NUMBER, "-main-", tolower(TREATY), "-", tolower(GEOMETRY), "-0.svg")
-	svg(filename = svgname)
+    # svg(filename = svgname)
     
     switch(GEOMETRY,
         BARS = show_bars(populations, treaty_column, plot_title),

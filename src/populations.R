@@ -54,7 +54,7 @@ get_pop_sizes = function(dataset, treaty)
     return(statistics)
 }
 
-get_populations_main_test = function(dataset, treaty)
+get_populations_main_test = function(dataset, treaty, adjusted_mean = FALSE)
 {
 	# For protocol test: compare only
 	if (treaty == "protocol.ratifier")
@@ -83,5 +83,13 @@ get_populations_main_test = function(dataset, treaty)
                      nrow(nonratifiers), "non-ratifiers with a ratio of",
                      "\ndemocratizations to autocratizations of", ratio))
     
+    if (adjusted_mean)
+    {
+        nr_mean = median(nonratifiers$mean.index.change)
+        print(nr_mean)
+        ratifiers$mean.index.change = ratifiers$mean.index.change - nr_mean
+        nonratifiers$mean.index.change = nonratifiers$mean.index.change - nr_mean
+    }
+
     return(rbind(ratifiers, nonratifiers))
 }
