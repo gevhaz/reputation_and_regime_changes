@@ -264,7 +264,7 @@ run_chi_test = function(populations, group_criterion)
     print(chisq.test(contingency_table))
 }
 
-run_initial_test = function(TEST_NUMBER)
+run_pure_regime_change_test = function(TEST_NUMBER)
 {
     writeLines(paste("\nRunning initial test for test", TEST_NUMBER, "\n"))
 

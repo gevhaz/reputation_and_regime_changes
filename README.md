@@ -34,14 +34,14 @@ R project.R
 ```
 
 After that, the results of the thesis can be reproduced by calling one 
-of the functions `run_initial_test()` or `run_main_test()`. For the 
-initial test, only one argument is needed: the test number. It can be 1 
-or 2. The main test also takes the test number as the first argument but 
-additionally needs to know which treaty to use to divide the regimes 
-into populations of ratifiers and non-ratifiers. This argument should be 
-"CCPR" or "PROTOCOL". There is also a third, optional argument that 
-determines what type of plot will be produced. "BARS" for a bar plot and 
-"HISTOGRAM" for a histogram. An example test would be:
+of the functions `run_pure_regime_change_test()` or `run_main_test()`. 
+For the pure regime change test, only one argument is needed: the test 
+number. It can be 1 or 2. The main test also takes the test number as 
+the first argument but additionally needs to know which treaty to use to 
+divide the regimes into populations of ratifiers and non-ratifiers. This 
+argument should be "CCPR" or "PROTOCOL". There is also a third, optional 
+argument that determines what type of plot will be produced. "BARS" for 
+a bar plot and "HISTOGRAM" for a histogram. An example test would be:
 
 ```
 run_main_test(1, "CCPR", "BARS")
