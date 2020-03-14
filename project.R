@@ -153,9 +153,9 @@ fh_data["Information type",] = trimws(fh_data["Information type",])
 # It's the same country, just a name change.
 fh_data["Yugoslavia", 91:99] = fh_data["Serbia and Montenegro", 91:99]
 
-# indices = get_fh_indices(fh_data, "CL")
-indices = (get_fh_indices(fh_data, "CL") + 
-           get_fh_indices(fh_data, "PR")) / 2.0
+indices = get_fh_indices(fh_data, "CL")
+# indices = (get_fh_indices(fh_data, "CL") + 
+#            get_fh_indices(fh_data, "PR")) / 2.0
 
 # Make column for describing human rights trend based in mean index change.
 get_trend_column = function(mean_change)
@@ -226,8 +226,8 @@ histogram_labs = labs(x     = "Mean index change",
                       fill  = "Has ratified")
 
 # Titles for plots.
-init1_bars_title = ggtitle(label = "Test 1: Initial Test")
-init2_bars_title = ggtitle(label = "Test 2: Initial Test")
+init1_bars_title = ggtitle(label = "Test 1: Pure regime change test")
+init2_bars_title = ggtitle(label = "Test 2: Pure regime change test")
 main1_ccpr_bars_title = ggtitle(label = "Test 1: CCPR")
 main2_ccpr_bars_title = ggtitle(label = "Test 2: CCPR")
 main1_protocol_bars_title = ggtitle(label = "Test 1: Protocol")
@@ -238,7 +238,7 @@ show_histogram = function(populations, treaty, bars_title)
 {
     ggplot(populations,aes_string("mean.index.change", fill=treaty)) + 
         bars_theme + histogram_labs + bars_title + 
-        geom_histogram(alpha = 0.5, aes(y = ..density..), binwidth = 1, 
+        geom_histogram(alpha = 0.5, binwidth = 1, 
         position = "identity") +
         # geom_density(alpha = 0.2) + 
         scale_fill_brewer(palette = "Set1")
@@ -249,6 +249,19 @@ show_bars = function(populations, treaty, bars_title)
     return(ggplot(populations,aes_string(treaty, fill="trend")) + 
            bars_theme + bars_labs + bars_title + bars_palette + 
            geom_bar(position = "fill"))
+}
+
+run_chi_test = function(populations, group_criterion)
+{
+    contingency_table = table(populations[, group_criterion], populations$trend)
+    rownames(contingency_table) = c("Nonratifiers", "Ratifiers")
+    # contingency_table = t(contingency_table)
+    # writeLines("")
+    # print(xtable(contingency_table))
+    # writeLines("")
+    # print(contingency_table)
+    # writeLines("")
+    print(chisq.test(contingency_table))
 }
 
 run_initial_test = function(TEST_NUMBER)
@@ -272,8 +285,8 @@ run_initial_test = function(TEST_NUMBER)
 
 	# Save plot to disk
 	svgname = paste0("t", TEST_NUMBER, "-initial-bars-0.svg")
-	svg(filename = svgname)
-    
+    # svg(filename = svgname)
+
     plot_title = switch(TEST_NUMBER, init1_bars_title, init2_bars_title)
     show_bars(populations, treaty, plot_title)
 }
@@ -289,8 +302,7 @@ run_main_test = function(TEST_NUMBER, TREATY, GEOMETRY = "BARS")
     main_dataset = switch(TEST_NUMBER, conreg, sinreg,
                      stop("No test with that number."))
 
-    # TODO: Keep or not? Subtracting nr_mean.
-    populations = get_populations_main_test(main_dataset, treaty_column, TRUE)
+    populations = get_populations_main_test(main_dataset, treaty_column)
     populations$trend = get_trend_column(populations$mean.index.change)
 
     plot_title = switch(paste0(TREATY, TEST_NUMBER), 
@@ -303,11 +315,21 @@ run_main_test = function(TEST_NUMBER, TREATY, GEOMETRY = "BARS")
     HR_improvements_ratification_status(populations, TREATY)
 
 	# Save plot to disk
-	svgname = paste0("t", TEST_NUMBER, "-main-", tolower(TREATY), "-", tolower(GEOMETRY), "-0.svg")
+    svgname = paste0("t", TEST_NUMBER, "-main-", tolower(TREATY), "-",
+                     tolower(GEOMETRY), "-0.svg")
     # svg(filename = svgname)
-    
+
     switch(GEOMETRY,
-        BARS = show_bars(populations, treaty_column, plot_title),
-        HISTOGRAM = show_histogram(populations, treaty_column, plot_title),
-        stop("No such plot geometry."))
+        BARS = {
+            HR_improvements_ratification_status(populations, TREATY)
+            # run_chi_test(populations, treaty_column)
+            show_bars(populations, treaty_column, plot_title)
+        },
+        HISTOGRAM = {
+            print(t.test(populations[,"mean.index.change"] ~
+                         populations[,treaty_column], var.equal=TRUE))
+            show_histogram(populations, treaty_column, plot_title)
+        },
+        stop("No such plot geometry.")
+    )
 }
